@@ -4,14 +4,46 @@
 [![Ontology](https://img.shields.io/badge/ontology-CC--BY--4.0-blue.svg)](LICENSE-DATA)
 [![Data](https://img.shields.io/badge/data-not%20included-lightgrey.svg)](DATA.md)
 
-**CTA-KG** publishes a reusable **OWL ontology**, **SHACL shapes**, **SPARQL competency questions**, and a **Python pipeline** for modelling Primary Ciliary Dyskinesia (PCD) *Ciliary Transport Assay* (CTA) data as a FAIR knowledge graph.
+**CTA-KG** (Ciliary Transport Assay Knowledge Graph) is a FAIR, standards-based package for representing **Primary Ciliary Dyskinesia (PCD)** *Ciliary Transport Assay* (CTA) experiments as a reusable semantic resource.
+
+It publishes:
+
+- an **OWL ontology** (TBox) for donors, ALI inserts, assays, CBF / active-area measurements, tracks and provenance  
+- **SKOS** diagnostic taxonomies  
+- **SHACL** shapes for data-quality constraints  
+- **SPARQL competency questions** that test real scientific use cases  
+- a **Python pipeline** that builds RDF, validates, reasons, queries and packages an RO-Crate  
+
+The goal is to make CTA outputs **machine-queryable and interoperable**, not only stored as isolated laboratory files.
 
 > **This repository does not include assay data** (no `txt/`, `csv/`, Parquet, or RDF ABox dumps).  
 > Demo instances can be **generated locally** after clone (synthetic, labelled, non-clinical).  
 > See [DATA.md](DATA.md).
 
-**Ontology IRI:** `https://w3id.org/gulsayyar/cta/ontology/`  
-**Draft paper:** [CTA_KG_short_paper.md](CTA_KG_short_paper.md)
+| Item | Value |
+|------|--------|
+| Project short name | **CTA-KG** |
+| Ontology IRI | `https://w3id.org/gulsayyar/cta/ontology/` |
+| Ontology version | **2.0.0** |
+| Draft paper | [CTA_KG_short_paper.md](CTA_KG_short_paper.md) |
+| Design notes | [docs/01_ontology_design.md](docs/01_ontology_design.md) |
+| FAIR mapping | [docs/02_fair_mapping.md](docs/02_fair_mapping.md) |
+| Interview FAQ | [docs/INTERVIEW_FAQ.md](docs/INTERVIEW_FAQ.md) |
+
+---
+
+## Why this project exists
+
+PCD research needs to connect:
+
+```text
+donor → genetic variant / gene → culture insert → CTA assay
+      → CBF / active area → tracks → provenance (who / what / when)
+```
+
+Existing cilia resources mostly cover **genes and diseases** (GO cilia branch, Mondo, CiliaMiner, CiliaHub, SYSCILIA). They do **not** model laboratory CTA assay graphs.
+
+**CTA-KG fills that assay layer** with community ontology reuse (OBI, Mondo, GO, CL, UBERON, QUDT, PROV-O), validation and FAIR packaging.
 
 ---
 
@@ -19,64 +51,165 @@
 
 ```
 .
-├── ontology/          # TBox + SKOS + SHACL (publishable)
-├── queries/           # SPARQL competency questions
-├── src/               # Pipeline (generate → RDF → validate → query)
-├── docs/              # Design & FAIR notes
-├── CTA_KG_short_paper.md
+├── ontology/
+│   ├── cta.ttl            # OWL TBox (main ontology)
+│   ├── schemes.ttl        # SKOS diagnostic / modality schemes
+│   └── shapes.ttl         # SHACL validation shapes
+├── queries/               # SPARQL competency questions (cq1…cq6)
+├── src/                   # Pipeline: generate → RDF → validate → query
+├── docs/                  # Design, FAIR mapping, FAQ
+├── CTA_KG_short_paper.md  # Short manuscript draft
+├── DATA.md                # Data policy (nothing shipped)
+├── CITATION.cff
 ├── requirements.txt
-└── run_all.ps1
+├── run_all.ps1            # One-command local demo pipeline
+└── Makefile
 ```
 
-**Not included:** laboratory files, synthetic cohorts on disk, generated graphs, query result dumps.
+**Not included (on purpose):**
+
+- laboratory `txt/` / `csv/` exports  
+- synthetic cohorts committed on disk  
+- generated RDF graphs (`rdf/`)  
+- query result dumps  
+
+Those can be created **locally** after clone; they are gitignored.
 
 ---
 
 ## Quick start
 
 ```powershell
-git clone https://github.com/<you>/CTA-KG.git
-cd CTA-KG
+git clone https://github.com/gulsayyarali/cilia-pcd-ontologies.git
+cd cilia-pcd-ontologies
 py -m pip install -r requirements.txt
 .\run_all.ps1
 ```
 
 `run_all.ps1` will:
 
-1. Generate a **local synthetic demo cohort** (not committed)
-2. Build RDF, validate with SHACL, run SPARQL CQs, write RO-Crate locally
+1. Generate a **local synthetic demo cohort** (not committed)  
+2. Build RDF from processed tables  
+3. Validate with **SHACL**  
+4. Run light **OWL-RL** reasoning  
+5. Execute **SPARQL** competency questions  
+6. Write a local **RO-Crate** manifest  
 
-Generated artefacts stay on your machine (`data/`, `rdf/`, `docs/query_results/`) and are gitignored.
+Generated artefacts stay on your machine:
+
+| Path | Content |
+|------|---------|
+| `data/processed/` | Parquet / CSV demo tables |
+| `rdf/` | Turtle / JSON-LD graphs |
+| `docs/query_results/` | SPARQL outputs |
+| `ro-crate-metadata.json` | Local package metadata |
+
+**Do not commit** those folders/files.
+
+### Step-by-step (optional)
+
+```powershell
+py src/generate_synthetic_data.py
+py src/preprocess.py
+py src/build_graph.py
+py src/validate.py
+py src/reason.py
+py src/query.py
+py src/package.py
+```
+
+### Browse the ontology without running the pipeline
+
+Open in [Protégé](https://protege.stanford.edu/):
+
+- `ontology/cta.ttl`  
+- `ontology/schemes.ttl`  
+
+Or inspect shapes in `ontology/shapes.ttl`.
 
 ---
 
 ## Ontology (v2.0)
 
-Reuse-first alignments:
+### Design principles
 
-| CTA concept | External standard |
-|-------------|-------------------|
-| Assay | OBI |
-| PCD | Mondo `MONDO:0016575` |
-| Cilium / CBF processes | GO (`GO:0005929`, `GO:0003356`, …) |
-| Cell / tissue | CL, UBERON |
-| Units | QUDT |
-| Provenance | PROV-O |
+1. **Reuse-first** — subclass / `equivalentClass` / `seeAlso` to community terms; do not reinvent Assay, Cilium or PCD  
+2. **Annotated measurements** — every measurement has value + QUDT unit (+ quantity kind)  
+3. **TBox / ABox split** — schema in `ontology/`; instances generated by code  
+4. **Competency-question driven** — `queries/cq*.rq` are acceptance tests  
+5. **Honest demo policy** — no patient data in git; optional local synthetic ABox  
 
-Packaging patterns (persistent IRIs, DCTERMS/VANN metadata, TBox/ABox split) follow modular OWL practice also used in [gulsayyarali/Ontologies](https://github.com/gulsayyarali/Ontologies) (building-systems domain — patterns only).
+### Reuse / alignment table
+
+| CTA concept | External standard | Example IRI / term |
+|-------------|-------------------|--------------------|
+| Assay | OBI | `OBI:0000070` |
+| Investigation | OBI | `OBI:0000098` |
+| PCD | Mondo | `MONDO:0016575` |
+| Ciliopathy | Mondo | `MONDO:0005308` |
+| Cilium (structure) | GO | `GO:0005929` |
+| Cilium movement | GO | `GO:0003341` |
+| Regulation of CBF | GO | `GO:0003356` |
+| Nasal ciliated epithelium | CL | `CL:0002148` |
+| Respiratory epithelium | UBERON | `UBERON:0002048` |
+| Units (Hz, %, µm/s) | QUDT | `unit:HZ`, `unit:PERCENT`, … |
+| Provenance | PROV-O | `prov:Activity`, `wasGeneratedBy`, … |
+| Genes | Identifiers.org / HGNC | `https://identifiers.org/hgnc.symbol:DNAH11` |
+
+Packaging patterns (persistent IRIs, DCTERMS/VANN metadata, modular TBox/ABox) follow modular OWL practice also used in [gulsayyarali/Ontologies](https://github.com/gulsayyarali/Ontologies) (building-systems domain — **patterns only**, not HVAC content).
+
+---
+
+## Canonical data model
+
+```text
+Investigation
+  └── Donor ──carriesVariant──► GeneticVariant ──variantInGene──► Gene (HGNC)
+        └── Insert (ALI culture well)
+              ├── hasAssay ──► CiliaryTransportAssay ──producedVideo──► Video ──hasTrack──► Track ──TrackPoint
+              ├── hasMeasurement ──► CBFMeasurement / ActiveAreaMeasurement (value + unit)
+              └── PROV-O activity (instrument, software, agent, time)
+```
 
 ---
 
 ## Competency questions
 
-| ID | Question |
-|----|----------|
-| CQ1 | DNAH11 donors × Mean CBF |
-| CQ2 | Fast tracks on a demo insert |
-| CQ3 | Active Area provenance |
-| CQ4 | Healthy vs hallmark Active Area |
-| CQ5 | Hz / QUDT measurements |
-| CQ6 | Classification stub features (synthetic only) |
+| ID | File | Scientific question |
+|----|------|---------------------|
+| CQ1 | `queries/cq1_dnah11_cbf.rq` | Which DNAH11-linked donors have Mean CBF (G WFA)? |
+| CQ2 | `queries/cq2_fast_tracks.rq` | Which tracks on a demo insert have mean speed > 5 µm/s? |
+| CQ3 | `queries/cq3_active_area_provenance.rq` | What is the PROV chain for Active Area? |
+| CQ4 | `queries/cq4_active_area_comparison.rq` | How does mean Active Area differ (healthy vs hallmark PCD)? |
+| CQ5 | `queries/cq5_hz_measurements.rq` | Which measurements use Hz / QUDT frequency? |
+| CQ6 | `queries/cq6_xai_features.rq` | Which **stub** classification / XAI features are attached? (demo only) |
+
+After `.\run_all.ps1`, results appear under `docs/query_results/` (local only).
+
+---
+
+## Pipeline overview
+
+| Phase | Script | Output |
+|-------|--------|--------|
+| Generate demo tables | `src/generate_synthetic_data.py` | local `data/processed/` |
+| Preprocess / dictionary | `src/preprocess.py` | data dictionary |
+| Build graph | `src/build_graph.py` | local `rdf/cta_data.ttl` |
+| Validate | `src/validate.py` | SHACL report |
+| Reason | `src/reason.py` | inferred triples (local) |
+| Query | `src/query.py` | CQ result tables |
+| Package | `src/package.py` | local RO-Crate |
+
+---
+
+## Recommended tools
+
+| Task | Tool |
+|------|------|
+| Ontology editing | Protégé |
+| SPARQL exploration | GraphDB Free, Fuseki, or `rdflib` |
+| SHACL | pySHACL (`src/validate.py`) |
+| Daily editing | VS Code / Cursor |
 
 ---
 
@@ -84,9 +217,24 @@ Packaging patterns (persistent IRIs, DCTERMS/VANN metadata, TBox/ABox split) fol
 
 See [CITATION.cff](CITATION.cff).
 
+Suggested text:
+
+```text
+Sayyar, G. (2026). CTA-KG: FAIR ontology and pipeline for PCD ciliary
+transport assays (v2.0). GitHub: https://github.com/gulsayyarali/cilia-pcd-ontologies
+```
+
 ---
 
 ## Licence
 
-- Code (`src/`): [MIT](LICENSE)
-- Ontology & documentation: [CC-BY-4.0](LICENSE-DATA)
+- **Code** (`src/`): [MIT](LICENSE)  
+- **Ontology & documentation**: [CC-BY-4.0](LICENSE-DATA)  
+
+---
+
+## Contributing / contact
+
+Issues and pull requests are welcome (ontology term requests, new competency questions, documentation fixes).
+
+For real multi-centre CTA data: keep identifiable laboratory exports in a **controlled-access** tier; publish only ontology, code and non-identifying documentation in this public repository.
