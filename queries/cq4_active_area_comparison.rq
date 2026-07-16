@@ -1,0 +1,17 @@
+# CQ4: Compare mean Active Area (%) between healthy controls and hallmark-defect PCD
+PREFIX cta: <https://w3id.org/gulsayyar/cta/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?group (AVG(?value) AS ?meanActiveArea) (COUNT(?measurement) AS ?n)
+WHERE {
+    ?insert cta:hasDiagnosticSubgroup ?groupConcept .
+    ?insert cta:hasMeasurement ?measurement .
+    ?measurement a cta:ActiveAreaMeasurement ;
+                 cta:hasValue ?value .
+    FILTER(?groupConcept = cta:HealthyControl || ?groupConcept = cta:HallmarkPathognomonicDefect)
+    BIND(
+        IF(?groupConcept = cta:HealthyControl, "HealthyControl", "HallmarkPathognomonicDefect") AS ?group
+    )
+}
+GROUP BY ?group
+ORDER BY ?group

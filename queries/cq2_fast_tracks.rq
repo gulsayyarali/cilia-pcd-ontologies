@@ -1,0 +1,17 @@
+# CQ2: Tracks for insert OP-4772_Ins2 with mean speed above threshold (5 µm/s)
+PREFIX cta: <https://w3id.org/gulsayyar/cta/ontology/>
+PREFIX ctad: <https://w3id.org/gulsayyar/cta/data/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+
+SELECT ?track ?trackLabel ?meanSpeed
+WHERE {
+    ?insert rdfs:label "OP-4772_Ins2" .
+    ?video cta:hasTrack ?track .
+    ?assay cta:producedVideo ?video .
+    ?insert cta:hasAssay ?assay .
+    ?track rdfs:label ?trackLabel ;
+           cta:meanSpeed ?meanSpeed .
+    FILTER(?meanSpeed > 5.0)
+}
+ORDER BY DESC(?meanSpeed)

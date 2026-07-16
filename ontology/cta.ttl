@@ -1,0 +1,522 @@
+@prefix cta:     <https://w3id.org/gulsayyar/cta/ontology/> .
+@prefix ctad:    <https://w3id.org/gulsayyar/cta/data/> .
+@prefix rdf:     <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl:     <http://www.w3.org/2002/07/owl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann:    <http://purl.org/vocab/vann/> .
+@prefix voaf:    <http://purl.org/vocommons/voaf#> .
+@prefix vs:      <http://www.w3.org/2003/06/sw-vocab-status/ns#> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix obi:     <http://purl.obolibrary.org/obo/OBI_> .
+@prefix iao:     <http://purl.obolibrary.org/obo/IAO_> .
+@prefix cl:      <http://purl.obolibrary.org/obo/CL_> .
+@prefix uberon:  <http://purl.obolibrary.org/obo/UBERON_> .
+@prefix mondo:   <http://purl.obolibrary.org/obo/MONDO_> .
+@prefix go:      <http://purl.obolibrary.org/obo/GO_> .
+@prefix hp:      <http://purl.obolibrary.org/obo/HP_> .
+@prefix pato:    <http://purl.obolibrary.org/obo/PATO_> .
+@prefix stato:   <http://purl.obolibrary.org/obo/STATO_> .
+@prefix duo:     <http://purl.obolibrary.org/obo/DUO_> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix quantity: <http://qudt.org/vocab/quantitykind/> .
+@prefix schema:  <https://schema.org/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+
+# =============================================================================
+# CTA Ontology v2.0 — Ciliary Transport Assay Knowledge Graph (TBox)
+#
+# Design principles (publication-oriented):
+#  1. Reuse-first: subclass / exactMatch to OBI, MONDO, GO, CL, UBERON, QUDT, PROV
+#  2. Hub + annotated measurement pattern (inspired by modular OWL packaging
+#     practice, e.g. https://github.com/gulsayyarali/Ontologies )
+#  3. Persistent IRIs under https://w3id.org/gulsayyar/cta/
+#  4. Competency-question driven: genotype ↔ motility ↔ provenance
+#  5. TBox here; ABox generated separately (never hand-typed instances)
+# =============================================================================
+
+cta:ontology a owl:Ontology , voaf:Vocabulary ;
+    dcterms:title "Ciliary Transport Assay Ontology (CTA-O)"@en ;
+    dcterms:description """OWL ontology for Primary Ciliary Dyskinesia (PCD) Ciliary Transport Assay
+data: donors, ALI culture inserts, bead-tracking assays, CBF/active-area
+measurements, trajectories, and PROV-O provenance. Aligns upward to OBI, MONDO,
+GO, CL, UBERON, QUDT and PROV-O. Complements gene–disease cilia resources
+(CiliaMiner, CiliaHub, SYSCILIA, GO cilia branch) at the assay-data layer."""@en ;
+    dcterms:creator "Gul Sayyar" ;
+    dcterms:creator <https://orcid.org/0000-0002-1825-0097> ;
+    dcterms:publisher "Gul Sayyar" ;
+    dcterms:issued "2026-07-01"^^xsd:date ;
+    dcterms:modified "2026-07-16"^^xsd:date ;
+    dcterms:license <https://creativecommons.org/licenses/by/4.0/> ;
+    dcterms:rights "Copyright © 2026 Gul Sayyar. Licensed under CC-BY-4.0."@en ;
+    dcterms:subject "primary ciliary dyskinesia"@en , "ciliary transport assay"@en ,
+                    "FAIR"@en , "knowledge graph"@en , "motile cilia"@en ;
+    vann:preferredNamespacePrefix "cta" ;
+    vann:preferredNamespaceUri "https://w3id.org/gulsayyar/cta/ontology/" ;
+    owl:versionInfo "2.0.0" ;
+    owl:versionIRI <https://w3id.org/gulsayyar/cta/ontology/2.0.0> ;
+    rdfs:seeAlso <https://github.com/gulsayyarali/Ontologies> ;
+    rdfs:seeAlso <http://purl.obolibrary.org/obo/mondo.owl> ;
+    rdfs:seeAlso <http://purl.obolibrary.org/obo/go.owl> ;
+    rdfs:seeAlso <https://doi.org/10.1186/s13630-017-0054-8> ;
+    rdfs:seeAlso <https://doi.org/10.1093/database/baad047> ;
+    rdfs:comment "v2.0: richer metadata, GO/HPO alignments, annotated measurement pattern, corrected MONDO PCD IRI."@en .
+
+# ---------------------------------------------------------------------------
+# Agents / devices
+# ---------------------------------------------------------------------------
+cta:Person a owl:Class ;
+    rdfs:subClassOf prov:Agent ;
+    rdfs:label "Person"@en ;
+    vs:term_status "stable" .
+
+cta:Organization a owl:Class ;
+    rdfs:subClassOf prov:Agent ;
+    rdfs:label "Organization"@en ;
+    vs:term_status "stable" .
+
+cta:Instrument a owl:Class ;
+    rdfs:subClassOf obi:OBI_0000040 ;
+    rdfs:label "Instrument"@en ;
+    rdfs:comment "Physical device used in CTA imaging or analysis."@en ;
+    vs:term_status "stable" .
+
+cta:Software a owl:Class ;
+    rdfs:subClassOf prov:SoftwareAgent ;
+    rdfs:label "Software"@en ;
+    vs:term_status "stable" .
+
+# ---------------------------------------------------------------------------
+# Investigation hierarchy (hub)
+# ---------------------------------------------------------------------------
+cta:Investigation a owl:Class ;
+    rdfs:subClassOf obi:OBI_0000098 ;
+    rdfs:label "Investigation"@en ;
+    rdfs:comment "Top-level study bundling donors, cultures and assays."@en ;
+    vs:term_status "stable" .
+
+cta:Donor a owl:Class ;
+    rdfs:subClassOf obi:OBI_0100026 ;
+    rdfs:label "Donor"@en ;
+    rdfs:comment "Human donor represented by pseudonymous identifier only in open release."@en ;
+    vs:term_status "stable" .
+
+cta:GeneticVariant a owl:Class ;
+    rdfs:label "Genetic variant"@en ;
+    rdfs:comment "Variant associated with a donor; links to HGNC gene via Identifiers.org."@en ;
+    vs:term_status "stable" .
+
+cta:Gene a owl:Class ;
+    rdfs:label "Gene"@en ;
+    rdfs:comment "Gene concept; instance IRIs preferably Identifiers.org HGNC symbols."@en ;
+    vs:term_status "stable" .
+
+cta:ALICulture a owl:Class ;
+    rdfs:subClassOf obi:OBI_0000769 ;
+    rdfs:label "ALI culture"@en ;
+    rdfs:comment "Air–liquid interface culture of nasal respiratory epithelium."@en ;
+    vs:term_status "stable" .
+
+cta:Insert a owl:Class ;
+    rdfs:subClassOf obi:OBI_0000938 ;
+    rdfs:label "Culture insert"@en ;
+    rdfs:comment "Physical insert / specimen unit assayed in CTA."@en ;
+    vs:term_status "stable" .
+
+cta:PCDInsert a owl:Class ;
+    rdfs:subClassOf cta:Insert ;
+    rdfs:label "PCD insert"@en ;
+    vs:term_status "stable" .
+
+cta:HealthyInsert a owl:Class ;
+    rdfs:subClassOf cta:Insert ;
+    rdfs:label "Healthy control insert"@en ;
+    vs:term_status "stable" .
+
+# ---------------------------------------------------------------------------
+# Assay & imaging
+# ---------------------------------------------------------------------------
+cta:CiliaryTransportAssay a owl:Class ;
+    rdfs:subClassOf obi:OBI_0000070 ;
+    rdfs:label "Ciliary transport assay"@en ;
+    rdfs:comment """Bead-tracking assay measuring mucociliary / ciliary transport on ALI
+cultures. Related biological processes in GO include cilium movement and
+regulation of cilium beat frequency."""@en ;
+    rdfs:seeAlso go:GO_0003341 ;   # cilium movement
+    rdfs:seeAlso go:GO_0003356 ;   # regulation of cilium beat frequency
+    vs:term_status "stable" .
+
+cta:ImagingAcquisition a owl:Class ;
+    rdfs:subClassOf obi:OBI_0000185 ;
+    rdfs:label "Imaging acquisition"@en ;
+    vs:term_status "stable" .
+
+cta:Video a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Video"@en ;
+    rdfs:comment "High-speed microscopy video artefact used for tracking."@en ;
+    vs:term_status "stable" .
+
+cta:Track a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Track"@en ;
+    rdfs:comment "Trajectory of a tracked particle / bead across frames."@en ;
+    vs:term_status "stable" .
+
+cta:TrackPoint a owl:Class ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:label "Track point"@en ;
+    rdfs:comment "Spatiotemporal sample on a track (x, y, t, speed)."@en ;
+    vs:term_status "stable" .
+
+cta:DerivedFeature a owl:Class ;
+    rdfs:subClassOf iao:0000027 ;
+    rdfs:label "Derived feature"@en ;
+    rdfs:comment "Computed aggregate feature (e.g. mean speed, net displacement)."@en ;
+    vs:term_status "stable" .
+
+# ---------------------------------------------------------------------------
+# Annotated measurement pattern (quantity + unit + value)
+# ---------------------------------------------------------------------------
+cta:Measurement a owl:Class ;
+    rdfs:subClassOf iao:0000032 ;  # data item / measurement datum style
+    rdfs:label "Measurement"@en ;
+    rdfs:comment """Annotated quantitative observation: literal value + QUDT unit +
+optional quantity kind. Mirrors modular annotated I/O patterns used in
+engineering OWL packages while reusing biomedical units."""@en ;
+    vs:term_status "stable" .
+
+cta:ActiveAreaMeasurement a owl:Class ;
+    rdfs:subClassOf cta:Measurement ;
+    rdfs:label "Active area measurement"@en ;
+    rdfs:comment "Fraction of field with active ciliary motion (percent)."@en ;
+    vs:term_status "stable" .
+
+cta:CBFMeasurement a owl:Class ;
+    rdfs:subClassOf cta:Measurement ;
+    rdfs:label "Ciliary beat frequency measurement"@en ;
+    rdfs:comment "Ciliary beat frequency (Hz). Aligns with GO beat-frequency processes."@en ;
+    rdfs:seeAlso go:GO_0003356 ;
+    rdfs:seeAlso go:GO_0060296 ;
+    vs:term_status "stable" .
+
+cta:ClassificationResult a owl:Class ;
+    rdfs:subClassOf stato:0000032 ;
+    rdfs:label "Classification result"@en ;
+    rdfs:comment """Optional predictive modelling output. In the public demo package this
+class is populated only by explicitly labelled synthetic stubs — not clinical AI."""@en ;
+    vs:term_status "testing" .
+
+# ---------------------------------------------------------------------------
+# Anatomy / disease / process alignments (reuse, do not redefine)
+# ---------------------------------------------------------------------------
+cta:NasalCiliatedEpithelium a owl:Class ;
+    rdfs:subClassOf cl:CL_0002148 ;
+    rdfs:label "Nasal respiratory ciliated epithelial cell"@en ;
+    rdfs:seeAlso go:GO_0005929 ;  # cilium
+    vs:term_status "stable" .
+
+cta:RespiratoryEpithelium a owl:Class ;
+    rdfs:subClassOf uberon:UBERON_0002048 ;
+    rdfs:label "Respiratory epithelium"@en ;
+    vs:term_status "stable" .
+
+# Canonical Mondo PCD term (OLS): MONDO:0016575
+cta:PrimaryCiliaryDyskinesia a owl:Class ;
+    owl:equivalentClass mondo:MONDO_0016575 ;
+    rdfs:label "Primary ciliary dyskinesia"@en ;
+    rdfs:comment "Equivalent to Mondo PCD. Parent ciliopathy: MONDO:0005308."@en ;
+    rdfs:seeAlso mondo:MONDO_0005308 ;
+    rdfs:seeAlso hp:HP_0012265 ;  # abnormal mucociliary clearance (HPO)
+    vs:term_status "stable" .
+
+cta:Ciliopathy a owl:Class ;
+    owl:equivalentClass mondo:MONDO_0005308 ;
+    rdfs:label "Ciliopathy"@en ;
+    vs:term_status "stable" .
+
+# GO cellular component / process anchors (for interoperability, not duplicated trees)
+cta:CiliumStructure a owl:Class ;
+    owl:equivalentClass go:GO_0005929 ;
+    rdfs:label "Cilium (GO)"@en ;
+    rdfs:comment "Bridge class to Gene Ontology cilium cellular component."@en ;
+    vs:term_status "stable" .
+
+cta:CiliumMovementProcess a owl:Class ;
+    owl:equivalentClass go:GO_0003341 ;
+    rdfs:label "Cilium movement (GO)"@en ;
+    vs:term_status "stable" .
+
+cta:CiliumBeatFrequencyRegulation a owl:Class ;
+    owl:equivalentClass go:GO_0003356 ;
+    rdfs:label "Regulation of cilium beat frequency (GO)"@en ;
+    vs:term_status "stable" .
+
+# ---------------------------------------------------------------------------
+# Object / data properties
+# ---------------------------------------------------------------------------
+cta:usesSpecimen a owl:ObjectProperty ;
+    rdfs:domain cta:CiliaryTransportAssay ;
+    rdfs:range obi:OBI_0002618 ;
+    rdfs:label "uses specimen"@en ;
+    vs:term_status "stable" .
+
+cta:hasCellType a owl:AnnotationProperty ;
+    rdfs:label "has cell type"@en .
+
+cta:hasDonor a owl:ObjectProperty ;
+    rdfs:domain cta:Insert ;
+    rdfs:range cta:Donor ;
+    rdfs:label "has donor"@en ;
+    owl:inverseOf cta:donorOf ;
+    vs:term_status "stable" .
+
+cta:donorOf a owl:ObjectProperty ;
+    rdfs:domain cta:Donor ;
+    rdfs:range cta:Insert ;
+    rdfs:label "donor of"@en ;
+    vs:term_status "stable" .
+
+cta:hasDiagnosticGroup a owl:ObjectProperty ;
+    rdfs:domain cta:Donor ;
+    rdfs:range skos:Concept ;
+    rdfs:label "has diagnostic group"@en ;
+    vs:term_status "stable" .
+
+cta:carriesVariant a owl:ObjectProperty ;
+    rdfs:domain cta:Donor ;
+    rdfs:range cta:GeneticVariant ;
+    rdfs:label "carries variant"@en ;
+    vs:term_status "stable" .
+
+cta:variantInGene a owl:ObjectProperty ;
+    rdfs:domain cta:GeneticVariant ;
+    rdfs:range cta:Gene ;
+    rdfs:label "variant in gene"@en ;
+    vs:term_status "stable" .
+
+cta:hasInsert a owl:ObjectProperty ;
+    rdfs:domain cta:ALICulture ;
+    rdfs:range cta:Insert ;
+    rdfs:label "has insert"@en ;
+    vs:term_status "stable" .
+
+cta:hasAssay a owl:ObjectProperty ;
+    rdfs:domain cta:Insert ;
+    rdfs:range cta:CiliaryTransportAssay ;
+    rdfs:label "has assay"@en ;
+    owl:inverseOf cta:assayOf ;
+    vs:term_status "stable" .
+
+cta:assayOf a owl:ObjectProperty ;
+    rdfs:domain cta:CiliaryTransportAssay ;
+    rdfs:range cta:Insert ;
+    rdfs:label "assay of"@en ;
+    vs:term_status "stable" .
+
+cta:hasDate a owl:DatatypeProperty ;
+    rdfs:domain cta:CiliaryTransportAssay ;
+    rdfs:range xsd:date ;
+    rdfs:label "has date"@en ;
+    vs:term_status "stable" .
+
+cta:hasInstrument a owl:ObjectProperty ;
+    rdfs:domain cta:CiliaryTransportAssay ;
+    rdfs:range cta:Instrument ;
+    rdfs:label "has instrument"@en ;
+    vs:term_status "stable" .
+
+cta:hasCondition a owl:ObjectProperty ;
+    rdfs:domain cta:CiliaryTransportAssay ;
+    rdfs:range skos:Concept ;
+    rdfs:label "has condition"@en ;
+    vs:term_status "stable" .
+
+cta:producedVideo a owl:ObjectProperty ;
+    rdfs:domain cta:CiliaryTransportAssay ;
+    rdfs:range cta:Video ;
+    rdfs:label "produced video"@en ;
+    vs:term_status "stable" .
+
+cta:hasTrack a owl:ObjectProperty ;
+    rdfs:domain cta:Video ;
+    rdfs:range cta:Track ;
+    rdfs:label "has track"@en ;
+    vs:term_status "stable" .
+
+cta:meanSpeed a owl:DatatypeProperty ;
+    rdfs:domain cta:Track ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "mean speed"@en ;
+    rdfs:comment "Mean track speed in µm/s (QUDT MicroM-PER-SEC)."@en ;
+    vs:term_status "stable" .
+
+cta:timeS a owl:DatatypeProperty ;
+    rdfs:domain cta:TrackPoint ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "time in seconds"@en ;
+    vs:term_status "stable" .
+
+cta:positionX a owl:DatatypeProperty ;
+    rdfs:domain cta:TrackPoint ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "X position in µm"@en ;
+    vs:term_status "stable" .
+
+cta:positionY a owl:DatatypeProperty ;
+    rdfs:domain cta:TrackPoint ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "Y position in µm"@en ;
+    vs:term_status "stable" .
+
+cta:hasTrackPoint a owl:ObjectProperty ;
+    rdfs:domain cta:Track ;
+    rdfs:range cta:TrackPoint ;
+    rdfs:label "has track point"@en ;
+    owl:inverseOf cta:isTrackPointOf ;
+    vs:term_status "stable" .
+
+cta:isTrackPointOf a owl:ObjectProperty ;
+    rdfs:domain cta:TrackPoint ;
+    rdfs:range cta:Track ;
+    rdfs:label "is track point of"@en ;
+    vs:term_status "stable" .
+
+cta:speed a owl:DatatypeProperty ;
+    rdfs:domain cta:TrackPoint ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "instantaneous speed"@en ;
+    vs:term_status "stable" .
+
+cta:hasMeasurement a owl:ObjectProperty ;
+    rdfs:domain cta:Insert ;
+    rdfs:range cta:Measurement ;
+    rdfs:label "has measurement"@en ;
+    vs:term_status "stable" .
+
+cta:hasDiagnosticSubgroup a owl:ObjectProperty ;
+    rdfs:domain cta:Insert ;
+    rdfs:range skos:Concept ;
+    rdfs:label "has diagnostic subgroup"@en ;
+    vs:term_status "stable" .
+
+cta:hasClassification a owl:ObjectProperty ;
+    rdfs:domain cta:Insert ;
+    rdfs:range cta:ClassificationResult ;
+    rdfs:label "has classification"@en ;
+    vs:term_status "testing" .
+
+cta:hasValue a owl:DatatypeProperty ;
+    rdfs:domain cta:Measurement ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "has value"@en ;
+    vs:term_status "stable" .
+
+cta:hasUnit a owl:ObjectProperty ;
+    rdfs:domain cta:Measurement ;
+    rdfs:range unit:Unit ;
+    rdfs:label "has unit"@en ;
+    rdfs:comment "QUDT unit individual (e.g. unit:HZ, unit:PERCENT)."@en ;
+    vs:term_status "stable" .
+
+cta:hasQuantityKind a owl:ObjectProperty ;
+    rdfs:domain cta:Measurement ;
+    rdfs:range quantity:QuantityKind ;
+    rdfs:label "has quantity kind"@en ;
+    vs:term_status "stable" .
+
+cta:predictedGroup a owl:ObjectProperty ;
+    rdfs:domain cta:ClassificationResult ;
+    rdfs:range skos:Concept ;
+    rdfs:label "predicted group"@en ;
+    vs:term_status "testing" .
+
+cta:probability a owl:DatatypeProperty ;
+    rdfs:domain cta:ClassificationResult ;
+    rdfs:range xsd:decimal ;
+    rdfs:label "probability"@en ;
+    vs:term_status "testing" .
+
+cta:modelId a owl:DatatypeProperty ;
+    rdfs:domain cta:ClassificationResult ;
+    rdfs:range xsd:string ;
+    rdfs:label "model id"@en ;
+    vs:term_status "testing" .
+
+cta:topXAIFeature a owl:DatatypeProperty ;
+    rdfs:domain cta:ClassificationResult ;
+    rdfs:range xsd:string ;
+    rdfs:label "top XAI feature"@en ;
+    vs:term_status "testing" .
+
+cta:isSynthetic a owl:DatatypeProperty ;
+    rdfs:range xsd:boolean ;
+    rdfs:label "is synthetic"@en ;
+    rdfs:comment "True when the entity or dataset was generated for demo / FAIR packaging."@en ;
+    vs:term_status "stable" .
+
+cta:hasDataUseRestriction a owl:ObjectProperty ;
+    rdfs:range duo:DUO_0000042 ;
+    rdfs:label "has data use restriction"@en ;
+    vs:term_status "stable" .
+
+# ---------------------------------------------------------------------------
+# OWL restrictions (protocol integrity)
+# ---------------------------------------------------------------------------
+cta:CiliaryTransportAssay rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty cta:producedVideo ;
+        owl:someValuesFrom cta:Video
+    ] .
+
+cta:Measurement rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty cta:hasUnit ;
+        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        owl:onClass unit:Unit
+    ] .
+
+cta:Track rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty cta:hasTrackPoint ;
+        owl:someValuesFrom cta:TrackPoint
+    ] .
+
+cta:Insert rdfs:subClassOf [
+        a owl:Restriction ;
+        owl:onProperty cta:hasDonor ;
+        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+        owl:onClass cta:Donor
+    ] .
+
+# ---------------------------------------------------------------------------
+# QUDT unit individuals (typed for SHACL)
+# ---------------------------------------------------------------------------
+unit:HZ a unit:Unit .
+unit:PERCENT a unit:Unit .
+unit:MicroM a unit:Unit .
+unit:SEC a unit:Unit .
+unit:MicroM-PER-SEC a unit:Unit .
+unit:DEG a unit:Unit .
+unit:DEG_C a unit:Unit .
+
+# ---------------------------------------------------------------------------
+# Fixed agents (provenance template)
+# ---------------------------------------------------------------------------
+cta:imaris a cta:Software ;
+    rdfs:label "Imaris"@en ;
+    schema:url <https://imaris.oxinst.com/> .
+
+cta:ctaPipeline a cta:Software ;
+    rdfs:label "CTA Analysis Pipeline"@en .
+
+cta:microscope a cta:Instrument ;
+    rdfs:label "High-speed video microscope"@en .
+
+cta:researcher a cta:Person ;
+    rdfs:label "Dataset curator"@en .
+
+cta:institution a cta:Organization ;
+    rdfs:label "Research Institution"@en .

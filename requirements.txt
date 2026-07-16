@@ -1,0 +1,10 @@
+pandas>=2.0
+numpy>=1.24
+rdflib>=7.0
+owlready2>=0.45
+pyshacl>=0.26
+rocrate>=0.7
+requests>=2.31
+python-dateutil>=2.8
+pyarrow>=14.0
+owlrl>=6.0

@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+message: "If you use CTA-KG, please cite this software and the draft paper."
+title: "CTA-KG: FAIR knowledge graph for PCD ciliary transport assays"
+version: "2.0.0"
+date-released: "2026-07-16"
+authors:
+  - family-names: "Sayyar"
+    given-names: "Gul"
+license: "MIT"
+repository-code: "https://github.com/gulsayyarali"
+url: "https://w3id.org/gulsayyar/cta/"
+keywords:
+  - FAIR
+  - ontology
+  - knowledge graph
+  - primary ciliary dyskinesia
+  - ciliary transport assay
+  - SPARQL
+  - SHACL
+preferred-citation:
+  type: article
+  title: "CTA-KG: A FAIR Semantic Knowledge Graph for Primary Ciliary Dyskinesia Ciliary Transport Assay Data"
+  authors:
+    - family-names: "Sayyar"
+      given-names: "Gul"
+  year: 2026
+  notes: "Draft manuscript in CTA_KG_short_paper.md; ontology v2.0.0"

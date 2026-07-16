@@ -1,0 +1,18 @@
+# CQ1: Donors with DNAH11 variant and their Mean CBF (G WFA)
+PREFIX cta: <https://w3id.org/gulsayyar/cta/ontology/>
+PREFIX ctad: <https://w3id.org/gulsayyar/cta/data/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?donor ?donorLabel ?insert ?cbfValue
+WHERE {
+    ?donor cta:carriesVariant ?variant .
+    ?variant cta:variantInGene <https://identifiers.org/hgnc.symbol:DNAH11> .
+    ?donor rdfs:label ?donorLabel .
+    ?insert cta:hasDonor ?donor .
+    ?insert cta:hasMeasurement ?m .
+    ?m a cta:CBFMeasurement ;
+       rdfs:label ?mLabel ;
+       cta:hasValue ?cbfValue .
+    FILTER(CONTAINS(STR(?mLabel), "Mean CBF (G WFA)"))
+}
+ORDER BY ?donor

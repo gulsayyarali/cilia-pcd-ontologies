@@ -1,0 +1,21 @@
+# CQ3: Full provenance of Active Area measurement for a given insert
+PREFIX cta: <https://w3id.org/gulsayyar/cta/ontology/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?insert ?measurement ?value ?unit ?activity ?instrument ?software ?agent ?generatedAt
+WHERE {
+    ?insert rdfs:label ?insertLabel .
+    FILTER(?insertLabel = "OP-4772_Ins2" || ?insertLabel = "W85_Ins1")
+    ?insert cta:hasMeasurement ?measurement .
+    ?measurement a cta:ActiveAreaMeasurement ;
+                 cta:hasValue ?value ;
+                 cta:hasUnit ?unit ;
+                 prov:wasGeneratedBy ?activity .
+    ?activity prov:wasAssociatedWith ?instrument ;
+              prov:wasAssociatedWith ?software ;
+              prov:wasAttributedTo ?agent ;
+              prov:generatedAtTime ?generatedAt .
+    FILTER EXISTS { ?instrument a cta:Instrument }
+    FILTER EXISTS { ?software a cta:Software }
+}

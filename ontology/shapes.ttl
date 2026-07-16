@@ -1,0 +1,91 @@
+@prefix cta:     <https://w3id.org/gulsayyar/cta/ontology/> .
+@prefix ctad:    <https://w3id.org/gulsayyar/cta/data/> .
+@prefix sh:      <http://www.w3.org/ns/shacl#> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix unit:    <http://qudt.org/vocab/unit/> .
+@prefix prov:    <http://www.w3.org/ns/prov#> .
+@prefix qudt:    <http://qudt.org/schema/qudt/> .
+
+# =============================================================================
+# SHACL Shapes (validation layer — complements OWL inference)
+# Pattern: SHACL enforces concrete cardinality/range; OWL expresses semantics.
+# =============================================================================
+
+cta:Shapes a sh:NodeShape ;
+    sh:targetClass cta:Measurement ;
+    sh:property [
+        sh:path cta:hasValue ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path cta:hasUnit ;
+        sh:class unit:Unit ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] .
+
+cta:ActiveAreaShape a sh:NodeShape ;
+    sh:targetClass cta:ActiveAreaMeasurement ;
+    sh:property [
+        sh:path cta:hasValue ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 100
+    ] ;
+    sh:property [
+        sh:path cta:hasUnit ;
+        sh:hasValue unit:PERCENT ;
+        sh:minCount 1
+    ] .
+
+cta:CBFShape a sh:NodeShape ;
+    sh:targetClass cta:CBFMeasurement ;
+    sh:property [
+        sh:path cta:hasValue ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0
+    ] ;
+    sh:property [
+        sh:path cta:hasUnit ;
+        sh:hasValue unit:HZ ;
+        sh:minCount 1
+    ] .
+
+cta:TrackShape a sh:NodeShape ;
+    sh:targetClass cta:Track ;
+    sh:property [
+        sh:path cta:hasTrackPoint ;
+        sh:minCount 1 ;
+        sh:message "Every Track must have at least one TrackPoint."
+    ] .
+
+cta:DonorShape a sh:NodeShape ;
+    sh:targetClass cta:Donor ;
+    sh:property [
+        sh:path cta:hasDiagnosticGroup ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] .
+
+cta:InsertShape a sh:NodeShape ;
+    sh:targetClass cta:Insert ;
+    sh:property [
+        sh:path cta:hasDonor ;
+        sh:minCount 1 ;
+        sh:maxCount 1
+    ] ;
+    sh:property [
+        sh:path prov:wasGeneratedBy ;
+        sh:minCount 1
+    ] .
+
+cta:ClassificationShape a sh:NodeShape ;
+    sh:targetClass cta:ClassificationResult ;
+    sh:property [
+        sh:path cta:probability ;
+        sh:datatype xsd:decimal ;
+        sh:minInclusive 0 ;
+        sh:maxInclusive 1
+    ] .

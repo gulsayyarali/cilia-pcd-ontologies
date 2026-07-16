@@ -1,0 +1,29 @@
+# Never commit data or generated graphs
+data/
+txt/
+csv/
+rdf/
+synthetic_data/
+ro-crate-metadata.json
+docs/query_results/
+docs/query_results_summary.md
+docs/validation_report.txt
+docs/inference_report.txt
+docs/ontology.html
+selection_manifest.csv
+
+# Python / OS
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log
+*.parquet
+*.avi
+*.tif
+*.tiff

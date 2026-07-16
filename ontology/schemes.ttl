@@ -1,0 +1,128 @@
+@prefix cta:     <https://w3id.org/gulsayyar/cta/ontology/> .
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mondo:   <http://purl.obolibrary.org/obo/MONDO_> .
+@prefix obi:     <http://purl.obolibrary.org/obo/OBI_> .
+
+# =============================================================================
+# SKOS Concept Schemes (taxonomies) — CTA-O v2
+# Pattern: SKOS for human-facing vocabularies; exactMatch to Mondo/OBI/GO.
+# PCD exactMatch: MONDO:0016575 (canonical OLS term).
+# =============================================================================
+
+cta:DiagnosticGroupScheme a skos:ConceptScheme ;
+    dcterms:title "CTA Diagnostic Group"@en ;
+    dcterms:description "Diagnostic grouping for CTA cohort."@en .
+
+cta:HealthyControl a skos:Concept ;
+    skos:inScheme cta:DiagnosticGroupScheme ;
+    skos:prefLabel "Healthy control"@en ;
+    skos:definition "Donor without PCD diagnosis; normal ciliary function expected."@en ;
+    skos:broader cta:DiagnosticGroupRoot .
+
+cta:PCD a skos:Concept ;
+    skos:inScheme cta:DiagnosticGroupScheme ;
+    skos:prefLabel "Primary ciliary dyskinesia"@en ;
+    skos:definition "Affected donor with PCD diagnosis."@en ;
+    skos:exactMatch mondo:MONDO_0016575 ;
+    skos:closeMatch mondo:MONDO_0005308 ;
+    skos:broader cta:DiagnosticGroupRoot .
+
+cta:HallmarkPathognomonicDefect a skos:Concept ;
+    skos:inScheme cta:DiagnosticGroupScheme ;
+    skos:prefLabel "Hallmark / pathognomonic ultrastructural defect"@en ;
+    skos:definition "TEM/IF pattern consistent with hallmark PCD ultrastructure (e.g. ODA/CP defect)."@en ;
+    skos:broader cta:PCD .
+
+cta:NormalOrNearNormalUltrastructure a skos:Concept ;
+    skos:inScheme cta:DiagnosticGroupScheme ;
+    skos:prefLabel "Normal or near-normal ultrastructure"@en ;
+    skos:definition "PCD genotype with relatively preserved ultrastructure on TEM."@en ;
+    skos:broader cta:PCD .
+
+cta:DiagnosticGroupRoot a skos:Concept ;
+    skos:inScheme cta:DiagnosticGroupScheme ;
+    skos:prefLabel "Diagnostic group"@en ;
+    skos:topConceptOf cta:DiagnosticGroupScheme .
+
+# --- Diagnostic modality ---
+cta:DiagnosticModalityScheme a skos:ConceptScheme ;
+    dcterms:title "Diagnostic Modality"@en .
+
+cta:ModalityCTA a skos:Concept ;
+    skos:inScheme cta:DiagnosticModalityScheme ;
+    skos:prefLabel "Ciliary Transport Assay"@en ;
+    skos:definition "Bead-tracking transport assay on ALI culture."@en ;
+    skos:exactMatch obi:OBI_0000070 ;
+    skos:topConceptOf cta:DiagnosticModalityScheme .
+
+cta:ModalityHSVMA a skos:Concept ;
+    skos:inScheme cta:DiagnosticModalityScheme ;
+    skos:prefLabel "High-speed video microscopy analysis"@en ;
+    skos:prefLabel "HSVMA"@en ;
+    skos:broader cta:ModalityCTA .
+
+cta:ModalityTEM a skos:Concept ;
+    skos:inScheme cta:DiagnosticModalityScheme ;
+    skos:prefLabel "Transmission electron microscopy"@en ;
+    skos:definition "Ultrastructural cilia assessment."@en .
+
+cta:ModalityIF a skos:Concept ;
+    skos:inScheme cta:DiagnosticModalityScheme ;
+    skos:prefLabel "Immunofluorescence"@en .
+
+cta:ModalitynNO a skos:Concept ;
+    skos:inScheme cta:DiagnosticModalityScheme ;
+    skos:prefLabel "Nasal nitric oxide"@en .
+
+cta:ModalityGenetics a skos:Concept ;
+    skos:inScheme cta:DiagnosticModalityScheme ;
+    skos:prefLabel "Genetic testing"@en .
+
+# --- Feature type ---
+cta:FeatureTypeScheme a skos:ConceptScheme ;
+    dcterms:title "CTA Feature Type"@en .
+
+cta:TrajectoryFeature a skos:Concept ;
+    skos:inScheme cta:FeatureTypeScheme ;
+    skos:prefLabel "Trajectory feature"@en ;
+    skos:definition "Features derived from single-bead track time series."@en ;
+    skos:topConceptOf cta:FeatureTypeScheme .
+
+cta:FlowFeature a skos:Concept ;
+    skos:inScheme cta:FeatureTypeScheme ;
+    skos:prefLabel "Flow feature"@en ;
+    skos:definition "Population-level flow field features from bead ensemble."@en ;
+    skos:topConceptOf cta:FeatureTypeScheme .
+
+# --- Gene defect grouping (narrower concepts under PCD) ---
+cta:GeneDefectScheme a skos:ConceptScheme ;
+    dcterms:title "PCD Gene Defect"@en .
+
+cta:GeneDNAH11 a skos:Concept ;
+    skos:inScheme cta:GeneDefectScheme ;
+    skos:prefLabel "DNAH11"@en ;
+    skos:closeMatch <https://identifiers.org/hgnc.symbol:DNAH11> ;
+    skos:broader cta:PCD .
+
+cta:GeneCCDC39 a skos:Concept ;
+    skos:inScheme cta:GeneDefectScheme ;
+    skos:prefLabel "CCDC39"@en ;
+    skos:closeMatch <https://identifiers.org/hgnc.symbol:CCDC39> ;
+    skos:broader cta:PCD .
+
+cta:GeneCCDC40 a skos:Concept ;
+    skos:inScheme cta:GeneDefectScheme ;
+    skos:prefLabel "CCDC40"@en ;
+    skos:closeMatch <https://identifiers.org/hgnc.symbol:CCDC40> ;
+    skos:broader cta:PCD .
+
+# --- Culture condition ---
+cta:CultureConditionScheme a skos:ConceptScheme ;
+    dcterms:title "Culture Condition"@en .
+
+cta:ConditionAir a skos:Concept ;
+    skos:inScheme cta:CultureConditionScheme ;
+    skos:prefLabel "Air-liquid interface"@en ;
+    skos:definition "ALI differentiation condition."@en ;
+    skos:topConceptOf cta:CultureConditionScheme .

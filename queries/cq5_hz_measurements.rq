@@ -1,0 +1,14 @@
+# CQ5: All measurements with unit Hz and their quantity kind
+PREFIX cta: <https://w3id.org/gulsayyar/cta/ontology/>
+PREFIX unit: <http://qudt.org/vocab/unit/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?measurement ?label ?value ?quantityKind
+WHERE {
+    ?measurement cta:hasUnit unit:HZ ;
+                 cta:hasValue ?value ;
+                 cta:hasQuantityKind ?quantityKind .
+    OPTIONAL { ?measurement rdfs:label ?label }
+}
+ORDER BY ?label
+LIMIT 100

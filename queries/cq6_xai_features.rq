@@ -1,0 +1,14 @@
+# CQ6: Top XAI features for classified inserts
+PREFIX cta: <https://w3id.org/gulsayyar/cta/ontology/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?insert ?insertLabel ?predictedGroup ?probability ?model ?xaiFeature
+WHERE {
+    ?insert cta:hasClassification ?classResult .
+    ?insert rdfs:label ?insertLabel .
+    ?classResult cta:predictedGroup ?predictedGroup ;
+                 cta:probability ?probability ;
+                 cta:modelId ?model ;
+                 cta:topXAIFeature ?xaiFeature .
+}
+ORDER BY DESC(?probability) ?insertLabel
