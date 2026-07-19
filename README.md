@@ -1,18 +1,14 @@
-# CTA-KG — FAIR ontology & pipeline for PCD Ciliary Transport Assays
+# CTA-KG — Pipeline for PCD Ciliary Transport Assays ontology and FAIR principle
 
-[![License: MIT](https://img.shields.io/badge/code-MIT-yellow.svg)](LICENSE)
-[![Ontology](https://img.shields.io/badge/ontology-CC--BY--4.0-blue.svg)](LICENSE-DATA)
-[![Data](https://img.shields.io/badge/data-not%20included-lightgrey.svg)](DATA.md)
 
 **CTA-KG** (Ciliary Transport Assay Knowledge Graph) is a FAIR, standards-based package for representing **Primary Ciliary Dyskinesia (PCD)** *Ciliary Transport Assay* (CTA) experiments as a reusable semantic resource.
 
 It publishes:
 
-- an **OWL ontology** (TBox) for donors, ALI inserts, assays, CBF / active-area measurements, tracks and provenance  
-- **SKOS** diagnostic taxonomies  
+- **OWL ontology** (TBox) for donors, ALI inserts, assays, CBF / active-area measurements, tracks and provenance  
 - **SHACL** shapes for data-quality constraints  
 - **SPARQL competency questions** that test real scientific use cases  
-- a **Python pipeline** that builds RDF, validates, reasons, queries and packages an RO-Crate  
+- **Python pipeline** that builds RDF, validates, reasons, queries and packages an RO-Crate  
 
 The goal is to make CTA outputs **machine-queryable and interoperable**, not only stored as isolated laboratory files.
 
@@ -58,8 +54,6 @@ Existing cilia resources mostly cover **genes and diseases** (GO cilia branch, M
 ├── queries/               # SPARQL competency questions (cq1…cq6)
 ├── src/                   # Pipeline: generate → RDF → validate → query
 ├── docs/                  # Design, FAIR mapping, FAQ
-├── CTA_KG_short_paper.md  # Short manuscript draft
-├── DATA.md                # Data policy (nothing shipped)
 ├── CITATION.cff
 ├── requirements.txt
 ├── run_all.ps1            # One-command local demo pipeline
@@ -93,7 +87,7 @@ py -m pip install -r requirements.txt
 3. Validate with **SHACL**  
 4. Run light **OWL-RL** reasoning  
 5. Execute **SPARQL** competency questions  
-6. Write a local **RO-Crate** manifest  
+
 
 Generated artefacts stay on your machine:
 
@@ -220,7 +214,7 @@ See [CITATION.cff](CITATION.cff).
 Suggested text:
 
 ```text
-Sayyar, G. (2026). CTA-KG: FAIR ontology and pipeline for PCD ciliary
+Ali, G. (2026). CTA-KG: FAIR ontology and pipeline for PCD ciliary
 transport assays (v2.0). GitHub: https://github.com/gulsayyarali/cilia-pcd-ontologies
 ```
 
